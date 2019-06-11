@@ -1,9 +1,10 @@
 export class Forecast {
-  constructor(info) {
+  constructor(id, info) {
     console.log(info)
     try {
-      this.city = info.location.city;
-      this.country = info.location.country_name;
+      this.id = id; 
+      this.city = info.location.city || info.location.name;
+      this.country = info.location.country_name || info.location.country;
       this.humidity = info.weather.main.humidity;
       this.conditions = info.weather.weather.description;
       this.maxTemperature = info.weather.main.temp_min;

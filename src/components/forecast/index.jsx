@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from "axios";
-import { Paper } from '@material-ui/core';
+import { Paper, Typography, Button } from '@material-ui/core';
 import ForecastList from '../forecast-list';
 
 const baseUrl = "http://localhost:3000/v1"
@@ -18,7 +18,7 @@ class Forecast extends React.Component {
   componentDidMount() {
     this.setState({ isLoading: true });
     this.getCity(this.state.cityId)
-      .then(() => this.setState({isLoading: false}))
+      .then(() => this.setState({ isLoading: false }))
       .catch(error => this.setState({
         error,
         isLoading: false
@@ -28,7 +28,7 @@ class Forecast extends React.Component {
   getCity(cityId) {
     return axios.get(`${baseUrl}${endpoint}/${cityId}`)
       .then(result => {
-        result.map(forecast => this.state.forecasts.push(forecast))
+        result.data.weathers.map(forecast => this.state.forecasts.push(forecast))
       })
       .catch(error => this.setState({
         error,
@@ -38,7 +38,7 @@ class Forecast extends React.Component {
 
   render() {
     const { forecasts, isLoading, error } = this.state;
-
+    console.log(forecasts);
     if (error) {
       return <p>{error.message}</p>;
     }
@@ -48,9 +48,19 @@ class Forecast extends React.Component {
     }
 
     return (
-      <Paper>
-        <ForecastList forecastList={forecasts} />
-      </Paper>
+      <div className="forecast-resume">
+        <Button onClick={() => this.props.history.push(`/forecasts`)}>Volver</Button>
+        { forecasts.map((forecast, index) =>
+          <Paper className="weather-day-container" key={`forecast-list-${index}`}>
+            <Typography variant='h5' >
+              Fecha: { forecast.date }
+              <div className="weather-day">
+                <ForecastList forecastList={forecast.weathers} remove={this.removeForecast} options={{remove: false, view: false}} />
+              </div>
+            </Typography>
+          </Paper>
+        )}
+      </div>
     );
   }
 }

@@ -5,6 +5,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import PropTypes from 'prop-types';
 import { Forecast } from '../../models/forecast';
+import { Button } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -21,16 +22,6 @@ const useStyles = makeStyles(theme => ({
   cover: {
     width: 151,
   },
-  controls: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingLeft: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
-  },
-  playIcon: {
-    height: 38,
-    width: 38,
-  },
 }));
 
 class ForecastItem extends React.Component {
@@ -38,7 +29,7 @@ class ForecastItem extends React.Component {
     const classes = useStyles;
     const { city, country, humidity, conditions, maxTemperature, minTemperature, date } = this.props.forecast;
     return (
-      <Card className={classes.card}>
+      <Card className="weather-card">
         <div className={classes.details}>
           { date && (
             <Typography className={classes.title} color="textSecondary" gutterBottom>
@@ -62,13 +53,38 @@ class ForecastItem extends React.Component {
             { `${maxTemperature} / ${minTemperature}` }
           </Typography>
         </div>
+        <div>
+            { this.props.options.remove && (
+              <Button onClick={() => this.props.remove() }>
+                Eliminar
+              </Button>
+            )}
+            { this.props.options.remove && (
+              <Button onClick={() => this.props.view() }>
+                Ver
+              </Button>
+            )}
+        </div>
       </Card>
     );
   }
 }
 
 ForecastItem.propTypes = {
-  forecast: PropTypes.any
+  forecast: PropTypes.any,
+  remove: PropTypes.func,
+  view: PropTypes.func,
+  options: PropTypes.shape({
+    remove: PropTypes.bool,
+    view: PropTypes.bool
+  })
+}
+
+ForecastItem.defaultProps = {
+  options: {
+    remove: true,
+    view: true
+  }
 }
 
 export default ForecastItem;

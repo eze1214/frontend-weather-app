@@ -1,3 +1,10 @@
+**Ejecutar**
+npm install
+npm start
+
+Se utilizaron componentes de Material-ui.
+Es necesario levantar el backend ver el readme del repositorio.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

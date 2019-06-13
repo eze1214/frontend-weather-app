@@ -59,7 +59,7 @@ class SelectForecast extends React.Component {
           onChange={this.onSelectOption}
           placeholder="Write 3 letters, select city and push accept"
         />
-        <Button onClick={()=> this.props.selectOption(this.state.selectedCity)}>Aceptar</Button>
+        <Button onClick={()=> this.props.selectOption(this.state.selectedCity)}>Accept</Button>
       </div>
     )
   }

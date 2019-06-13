@@ -27,7 +27,6 @@ class SelectForecast extends React.Component {
   }
 
   promiseOptions(inputValue) {
-    console.log(inputValue);
     return new Promise((resolve, reject) => {
       if (inputValue.length >= this.props.minSearch) {
         return axios.get(`${baseUrl}${endpoint}`, {
@@ -58,7 +57,7 @@ class SelectForecast extends React.Component {
           getOptionLabel={this.getOptionLabel}
           getOptionValue={this.getOptionValue}
           onChange={this.onSelectOption}
-          placeholder="Escriba los 3 primeros dígitos y luego seleccione la opción"
+          placeholder="Write 3 letters, select city and push accept"
         />
         <Button onClick={()=> this.props.selectOption(this.state.selectedCity)}>Aceptar</Button>
       </div>

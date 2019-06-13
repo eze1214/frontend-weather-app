@@ -8,7 +8,6 @@ const endpoint = "/forecast"
 class Forecast extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
       cityId: props.match.params.id,
       forecasts: []
@@ -26,8 +25,10 @@ class Forecast extends React.Component {
   }
 
   getCity(cityId) {
-    return axios.get(`${baseUrl}${endpoint}/${cityId}`)
+    const forecastEndpoint = (cityId !== 'current') ? `${baseUrl}${endpoint}/${cityId}` : `${baseUrl}${endpoint}`;
+    return axios.get(forecastEndpoint)
       .then(result => {
+        this.setState({city: result.data.location});
         result.data.weathers.map(forecast => this.state.forecasts.push(forecast))
       })
       .catch(error => this.setState({
@@ -37,8 +38,7 @@ class Forecast extends React.Component {
   }
 
   render() {
-    const { forecasts, isLoading, error } = this.state;
-    console.log(forecasts);
+    const { forecasts, isLoading, error, city } = this.state;
     if (error) {
       return <p>{error.message}</p>;
     }
@@ -46,9 +46,11 @@ class Forecast extends React.Component {
     if (isLoading) {
       return <p>Loading ...</p>;
     }
-
     return (
       <div className="forecast-resume">
+      { city && (
+        <Typography variant='h5'>Ciudad: {`${city.city || city.name} / ${city.country}`}</Typography>
+      )}
         <Button onClick={() => this.props.history.push(`/forecasts`)}>Volver</Button>
         { forecasts.map((forecast, index) =>
           <Paper className="weather-day-container" key={`forecast-list-${index}`}>

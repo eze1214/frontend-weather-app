@@ -35,6 +35,7 @@ class Forecasts extends React.Component {
   }
 
   removeForecast(index) {
+    this.setState({error: null});
     const cities = JSON.parse(localStorage.getItem('cities'));
     this.state.forecasts.splice(index, 1);
     cities.splice(index, 1);
@@ -45,14 +46,19 @@ class Forecasts extends React.Component {
   viewForecast(index) {
     const { history } = this.props;
     const { forecasts } = this.state;
-    console.log(forecasts);
-    history.push(`/forecasts/${forecasts[index].id}`)
+    const forecastId = forecasts[index].id;
+    if (forecastId) {
+      history.push(`/forecasts/${forecasts[index].id}`)
+    } else {
+      history.push(`/forecasts/current`)
+    }
   }
 
   addForecast(city) {
     this.setState({
       showAddForecast: false,
-      isLoading: true
+      isLoading: true,
+      message: null
     });
     const cities = JSON.parse(localStorage.getItem('cities'));
     if (!cities) {
@@ -61,8 +67,10 @@ class Forecasts extends React.Component {
       cities.push(city.id);
       localStorage.setItem('cities', JSON.stringify(cities));
     }
-    this.getForecast(city.id);
-  }
+    this.getForecast(city.id)
+      .then(() => this.setState({ isLoading: false, message: 'Weather added' }))
+      .catch(() => this.setState({ error: 'Error adding weather' }));
+    }
 
   getSavedCities() {
     const cities = JSON.parse(localStorage.getItem('cities'));
@@ -78,7 +86,7 @@ class Forecasts extends React.Component {
   getForecast(cityId) {
     return axios.get(`${baseUrl}${endpoint}/${cityId}`)
       .then(result => {
-        this.state.forecasts.push(new Forecast(cityId, result.data));
+        this.state.forecasts.unshift(new Forecast(cityId, result.data));
         this.setState({});
       })
       .catch(error => this.setState({
@@ -103,12 +111,12 @@ class Forecasts extends React.Component {
     if (forecasts.length < maxWeathers) {
       this.setState({ showAddForecast: true });
     } else {
-      this.setState({ error: {message: 'Only 5 forecasts are allowed'}});
+      this.setState({ error: {message: 'Only 5 forecasts are allowed, please remove one'}});
     }
   }
 
   render() {
-    const { forecasts, isLoading, error, showAddForecast } = this.state;
+    const { forecasts, isLoading, error, showAddForecast, message } = this.state;
 
     return (
       <div className="forecast-body">
@@ -118,14 +126,16 @@ class Forecasts extends React.Component {
         )
       }
       
-        
       {
-        error && <p>{error.message}</p>
+        error && <p>{error.message || error}</p>
+      }
+      {
+        message && <p>{message}</p>
       }
       {
         isLoading && <p>Loading ...</p>
       }
-      <Button onClick={this.showAddForecast}>Agregar</Button>
+      <Button onClick={this.showAddForecast}>Add city</Button>
       <Paper className="cities-forecast-container">
         <ForecastList
           forecastList={forecasts}

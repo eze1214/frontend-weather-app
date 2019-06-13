@@ -6,7 +6,6 @@ class ForecastList extends React.Component {
 
   render() {
     const { forecastList } = this.props;
-    console.log(forecastList);
     return forecastList.map((forecast, index) => {
       return <ForecastItem key={`forecast-${index}`}
         forecast={forecast}
